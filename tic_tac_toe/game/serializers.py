@@ -25,3 +25,6 @@ class GameSerializer(serializers.ModelSerializer):
     class Meta:
         model = Game
         fields = ['id', 'player1', 'player2', 'winner', 'is_draw', 'created_at', 'moves']
+        extra_kwargs = {
+            'player1': {'read_only': True}  # Make player1 read-only
+        }

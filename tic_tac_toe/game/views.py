@@ -33,8 +33,20 @@ class GameListCreateView(generics.ListCreateAPIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def perform_create(self, serializer):
-        player1 = self.request.user
-        player2 = User.objects.get(id=self.request.data.get('player2'))  # Use the custom User model
+        player1 = self.request.user  # Logged-in user is player1
+        player2_id = self.request.data.get('player2')  # Get player2 ID from request data
+
+        # Ensure player2_id is provided
+        if not player2_id:
+            raise serializers.ValidationError({"player2": "This field is required."})
+
+        # Fetch player2 from the database
+        try:
+            player2 = User.objects.get(id=player2_id)
+        except User.DoesNotExist:
+            raise serializers.ValidationError({"player2": "Player not found."})
+
+        # Save the game with player1 and player2
         serializer.save(player1=player1, player2=player2)
 
 # Game Retrieve View
