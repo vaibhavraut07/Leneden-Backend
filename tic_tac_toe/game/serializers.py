@@ -17,7 +17,9 @@ class MoveSerializer(serializers.ModelSerializer):
     class Meta:
         model = Move
         fields = ['id', 'game', 'player', 'position', 'created_at']
-
+        extra_kwargs = {
+            'player': {'read_only': True}  # Make player read-only
+        }
 # Game Serializer
 class GameSerializer(serializers.ModelSerializer):
     moves = MoveSerializer(many=True, read_only=True)

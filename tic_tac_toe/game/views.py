@@ -64,7 +64,7 @@ class MoveCreateView(generics.CreateAPIView):
     def perform_create(self, serializer):
         game_id = self.request.data.get('game')
         game = Game.objects.get(id=game_id)
-        player = self.request.user
+        player = self.request.user  # Logged-in user is the player
         position = self.request.data.get('position')
 
         # Check if the move is valid
@@ -81,7 +81,6 @@ class MoveCreateView(generics.CreateAPIView):
 
         # Check for a winner or draw after the move
         self.check_game_status(game)
-
     def check_game_status(self, game):
         moves = game.moves.all()
         winning_combinations = [
