@@ -1,13 +1,12 @@
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth.models import User
-from .models import Game, Move
+from .models import User, Game, Move  # Import the custom User model
 from .serializers import UserSerializer, GameSerializer, MoveSerializer
 
 # User Registration View
 class RegisterView(generics.CreateAPIView):
-    queryset = User.objects.all()
+    queryset = User.objects.all()  # Use the custom User model
     permission_classes = (permissions.AllowAny,)
     serializer_class = UserSerializer
 
@@ -18,7 +17,7 @@ class LoginView(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         username = request.data.get('username')
         password = request.data.get('password')
-        user = User.objects.filter(username=username).first()
+        user = User.objects.filter(username=username).first()  # Use the custom User model
         if user and user.check_password(password):
             refresh = RefreshToken.for_user(user)
             return Response({
@@ -35,7 +34,7 @@ class GameListCreateView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         player1 = self.request.user
-        player2 = User.objects.get(id=self.request.data.get('player2'))
+        player2 = User.objects.get(id=self.request.data.get('player2'))  # Use the custom User model
         serializer.save(player1=player1, player2=player2)
 
 # Game Retrieve View
