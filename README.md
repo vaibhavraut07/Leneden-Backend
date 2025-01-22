@@ -10,6 +10,7 @@ This is a backend system for a Tic-Tac-Toe game built using Django and Django RE
 - User registration and login with JWT authentication.
 - Create a new game between two players.
 - Make moves in the game and track the game state.
+- Automatically assign `X` or `O` to players based on their role in the game.
 - Fetch game details and history for a user.
 - Declare a winner or draw when the game is over.
 
@@ -88,14 +89,15 @@ Create a new game between two players.
       "winner": null,
       "is_draw": false,
       "created_at": "2023-10-10T12:34:56Z",
-      "moves": []
+      "moves": [],
+      "game_board": "   |   |   \n-----------\n   |   |   \n-----------\n   |   |   "
   }
   ```
 
 ---
 
 ### **4. Make a Move**
-Make a move in the game.
+Make a move in the game. The `symbol` (`X` or `O`) is automatically assigned based on the player's role in the game.
 
 - **URL**: `/api/moves/`
 - **Method**: `POST`
@@ -104,8 +106,8 @@ Make a move in the game.
 - **Request Body**:
   ```json
   {
-      "game": 1,   //ID of the game
-      "position": 0  //Position on the board (0-8)
+      "game": 1,   // ID of the game
+      "position": 0  // Position on the board (0-8)
   }
   ```
 - **Response**:
@@ -115,6 +117,7 @@ Make a move in the game.
       "game": 1,
       "player": 1,
       "position": 0,
+      "symbol": "X",  // Automatically assigned based on the player
       "created_at": "2023-10-10T12:35:00Z"
   }
   ```
@@ -122,7 +125,7 @@ Make a move in the game.
 ---
 
 ### **5. Fetch Game Details**
-Fetch the details of a specific game.
+Fetch the details of a specific game, including the current state of the game board.
 
 - **URL**: `/api/games/<game_id>/`
 - **Method**: `GET`
@@ -143,9 +146,11 @@ Fetch the details of a specific game.
               "game": 1,
               "player": 1,
               "position": 0,
+              "symbol": "X",
               "created_at": "2023-10-10T12:35:00Z"
           }
-      ]
+      ],
+      "game_board": "X |   |   \n-----------\n   |   |   \n-----------\n   |   |   "
   }
   ```
 
@@ -174,9 +179,11 @@ Fetch the game history for a user.
                   "game": 1,
                   "player": 1,
                   "position": 0,
+                  "symbol": "X",
                   "created_at": "2023-10-10T12:35:00Z"
               }
-          ]
+          ],
+          "game_board": "X |   |   \n-----------\n   |   |   \n-----------\n   |   |   "
       }
   ]
   ```
@@ -229,10 +236,10 @@ You can test the APIs using tools like **Postman** or **cURL**. Here’s an exam
    - Use the `/api/games/` endpoint to create a game between `player1` and `player2`.
 
 4. **Make moves**:
-   - Use the `/api/moves/` endpoint to make moves alternately for `player1` and `player2`.
+   - Use the `/api/moves/` endpoint to make moves alternately for `player1` and `player2`. The `symbol` (`X` or `O`) will be automatically assigned.
 
 5. **Fetch game details**:
-   - Use the `/api/games/<game_id>/` endpoint to check the current state of the game.
+   - Use the `/api/games/<game_id>/` endpoint to check the current state of the game, including the game board.
 
 6. **Fetch game history**:
    - Use the `/api/history/` endpoint to see all games played by a user.
@@ -256,3 +263,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 If you have any questions or need further assistance, feel free to reach out:
 - **Email**: work.vaibhavraut@gmail.com
 - **GitHub**: vaibhavraut07
+```
