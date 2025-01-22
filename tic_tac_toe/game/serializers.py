@@ -13,6 +13,7 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 # Move Serializer
+# Move Serializer
 class MoveSerializer(serializers.ModelSerializer):
     class Meta:
         model = Move
@@ -30,6 +31,10 @@ class GameSerializer(serializers.ModelSerializer):
     class Meta:
         model = Game
         fields = ['id', 'player1', 'player2', 'winner', 'is_draw', 'created_at', 'moves', 'game_board']
+        extra_kwargs = {
+            'player1': {'read_only': True},  # player1 is automatically set to the logged-in user
+            'player2': {'required': True},   # player2 is required but provided in the request
+        }
 
     def get_game_board(self, obj):
         # Initialize an empty 3x3 board

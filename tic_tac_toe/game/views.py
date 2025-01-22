@@ -27,6 +27,8 @@ class LoginView(generics.GenericAPIView):
         return Response({'error': 'Invalid Credentials'}, status=status.HTTP_400_BAD_REQUEST)
 
 # Game List and Create View
+# Game List and Create View
+# Game List and Create View
 class GameListCreateView(generics.ListCreateAPIView):
     queryset = Game.objects.all()
     serializer_class = GameSerializer
