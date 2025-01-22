@@ -1,6 +1,3 @@
-Here’s an updated version of the `README.md` file based on the changes made in the files, particularly the addition of the `symbol` field for `X` and `O` in the `Move` model and its handling in the serializers and views.
-
-```markdown
 # Leneden-Backend
 
 # Tic-Tac-Toe Backend Project
