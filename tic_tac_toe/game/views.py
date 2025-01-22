@@ -1,12 +1,12 @@
-from rest_framework import generics, permissions, status
+from rest_framework import generics, permissions, status, serializers
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import User, Game, Move  # Import the custom User model
+from .models import User, Game, Move
 from .serializers import UserSerializer, GameSerializer, MoveSerializer
 
 # User Registration View
 class RegisterView(generics.CreateAPIView):
-    queryset = User.objects.all()  # Use the custom User model
+    queryset = User.objects.all()
     permission_classes = (permissions.AllowAny,)
     serializer_class = UserSerializer
 
@@ -17,7 +17,7 @@ class LoginView(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         username = request.data.get('username')
         password = request.data.get('password')
-        user = User.objects.filter(username=username).first()  # Use the custom User model
+        user = User.objects.filter(username=username).first()
         if user and user.check_password(password):
             refresh = RefreshToken.for_user(user)
             return Response({
@@ -64,7 +64,7 @@ class MoveCreateView(generics.CreateAPIView):
     def perform_create(self, serializer):
         game_id = self.request.data.get('game')
         game = Game.objects.get(id=game_id)
-        player = self.request.user  # Logged-in user is the player
+        player = self.request.user
         position = self.request.data.get('position')
 
         # Check if the move is valid
@@ -77,10 +77,13 @@ class MoveCreateView(generics.CreateAPIView):
         if game.moves.filter(position=position).exists():
             return Response({'error': 'Position already taken'}, status=status.HTTP_400_BAD_REQUEST)
 
-        serializer.save(game=game, player=player, position=position)
+        # Assign X or O based on the player
+        symbol = 'X' if player == game.player1 else 'O'
+        serializer.save(game=game, player=player, position=position, symbol=symbol)
 
         # Check for a winner or draw after the move
         self.check_game_status(game)
+
     def check_game_status(self, game):
         moves = game.moves.all()
         winning_combinations = [
@@ -90,13 +93,13 @@ class MoveCreateView(generics.CreateAPIView):
         ]
 
         for combo in winning_combinations:
-            positions = [move.position for move in moves if move.player == game.player1]
+            positions = [move.position for move in moves if move.symbol == 'X']
             if all(pos in positions for pos in combo):
                 game.winner = game.player1
                 game.save()
                 return
 
-            positions = [move.position for move in moves if move.player == game.player2]
+            positions = [move.position for move in moves if move.symbol == 'O']
             if all(pos in positions for pos in combo):
                 game.winner = game.player2
                 game.save()
