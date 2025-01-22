@@ -19,6 +19,7 @@ class User(AbstractUser):
         verbose_name='user permissions',
         help_text='Specific permissions for this user.',
     )
+
 class Game(models.Model):
     player1 = models.ForeignKey(User, related_name='games_as_player1', on_delete=models.CASCADE)
     player2 = models.ForeignKey(User, related_name='games_as_player2', on_delete=models.CASCADE)
@@ -27,7 +28,13 @@ class Game(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 class Move(models.Model):
+    SYMBOL_CHOICES = [
+        ('X', 'X'),
+        ('O', 'O'),
+    ]
+
     game = models.ForeignKey(Game, related_name='moves', on_delete=models.CASCADE)
     player = models.ForeignKey(User, on_delete=models.CASCADE)
     position = models.IntegerField()
+    symbol = models.CharField(max_length=1, choices=SYMBOL_CHOICES)  # Add this field
     created_at = models.DateTimeField(auto_now_add=True)
